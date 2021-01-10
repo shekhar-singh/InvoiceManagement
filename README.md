@@ -26,11 +26,13 @@ First make sure to create and activate a virtialenv, then open a terminal at the
 
 Create .env file in the root project directry and set these values
 
-SECRET_KEY='SOME KEY'
-AWS_ACCESS_KEY_ID='SOME KEY'
-AWS_SECRET_ACCESS_KEY='SOME KEY'
-AWS_STORAGE_BUCKET_NAME='SOME KEY'
-AWS_S3_REGION_NAME='SOME KEY'
+	SECRET_KEY='SOME KEY'
+	AWS_ACCESS_KEY_ID='SOME KEY'
+	AWS_SECRET_ACCESS_KEY='SOME KEY'
+	AWS_STORAGE_BUCKET_NAME='SOME KEY'
+	AWS_S3_REGION_NAME='SOME KEY'
+	
+Run the migration amd migrate to database table.Then start the server
 
 	$ python manage.py makemigrations
 	$ python manage.py migrate
