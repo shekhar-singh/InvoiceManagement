@@ -1,0 +1,85 @@
+curl -X POST \
+  http://127.0.0.1:8000/markDigitized \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 11b12cc9-f881-3c63-225e-8524c81d4fff' \
+  -d '{
+"file_id":12
+}'
+
+response:
+
+{
+    "status": "digitized"
+}
+
+curl -X GET \
+  http://127.0.0.1:8000/getInvoice/1 \
+  -H 'postman-token: ac14f016-61d3-0930-1694-bb17069a0d80'
+
+response:
+{
+    "Invoice": {
+        "invoiceNumber": "inv002",
+        "issueDate": "12 jan 2020",
+        "dueDate": "20 jan 2020",
+        "total": "10.00",
+        "items": [
+            {
+                "description": "item2",
+                "quantity": 1,
+                "unitPrice": "5.00",
+                "amount": "5.00"
+            },
+            {
+                "description": "item2",
+                "quantity": 1,
+                "unitPrice": "5.00",
+                "amount": "5.00"
+            }
+        ]
+    }
+}
+
+curl -X POST \
+  http://127.0.0.1:8000/addInvoice \
+  -H 'content-type: application/json' \
+  -H 'postman-token: 0bca6e89-4bb5-772d-818e-b4d1dfe36fea' \
+  -d '{
+        "invoiceNumber": "inv002",
+        "fileId":1,
+        "issueDate": "12 jan 2020",
+        "dueDate": "20 jan 2020",
+        "total": "10.00",
+        "items": [
+            {
+                "description": "item1",
+                "quantity": 1,
+                "unitPrice": "5.00",
+                "amount": "5.00"
+            },
+            {
+                "description": "item2",
+                "quantity": 1,
+                "unitPrice": "5.00",
+                "amount": "5.00"
+            }
+        ]
+    }'
+
+response:
+{
+    "message": "updated successfully"
+}
+
+curl -X POST \
+  http://127.0.0.1:8000/upload \
+  -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
+  -H 'postman-token: b5b59ff5-db9a-5b27-7a92-3472ebc59982' \
+  -F 'file=@Shekhar Singh.pdf'
+
+response:
+
+  {
+    "message": "updated successfully",
+    "fileId": 12
+}
