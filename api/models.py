@@ -8,9 +8,10 @@ class Invoice(models.Model):
     issueDate = models.DateTimeField(blank=True, null=True)
     dueDate = models.DateTimeField(blank=True, null=True)
     digitized = models.BooleanField(default=False)
+    total = models.DecimalField(max_digits=20, decimal_places=2)
 
-    def __str__(self):
-        return self.fileId
+    # def __str__(self):
+    #     return self.fileId
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items', unique=False)
@@ -18,9 +19,7 @@ class InvoiceItem(models.Model):
     quantity = models.PositiveIntegerField()
     unitPrice = models.DecimalField(max_digits=10, decimal_places=2)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    subTotal = models.DecimalField(max_digits=10, decimal_places=2)
-    tax = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.DecimalField(max_digits=20, decimal_places=2)
 
-    def __str__(self):
-        return self.invoice
+
+    # def __str__(self):
+    #     return self.invoice

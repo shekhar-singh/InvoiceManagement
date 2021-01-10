@@ -31,9 +31,25 @@ def getDigitizationStatus(request, fid):
     
 
 def getInvoice(request,fid):
-    invoice = Invoice.objects.get(pk = fid)
-    invoice_item = InvoiceItem.objects.filter()
-    pass
+    try:
+        invoice = Invoice.objects.get(pk = fid)
+        invoice_item = InvoiceItem.objects.filter(invoice = invoice)
+        items = list(invoice_item.values())
+        invoiceDetails = {}
+        invoiceDetails['invoiceNumber'] = invoice.invoiceNumber
+        invoiceDetails['issueDate'] = invoice.issueDate
+        invoiceDetails['dueDate'] = invoice.dueDate
+        invoiceDetails['total'] = invoice.total
+        invoiceDetails['items'] = items
+
+        print(invoiceDetails)
+    
+        return JsonResponse({"Invoice":invoiceDetails})
+    except Exception as e:
+        raise e
+    finally:
+        return JsonResponse({"status":"someting went wrong"})
+    
 
 def addInvoice(request):
     pass
