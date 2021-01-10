@@ -38,5 +38,12 @@ Run the migration amd migrate to database table.Then start the server
 	$ python manage.py migrate
 	$ python manage.py runserver
 
+Testing
+-------
+
+For testing, you can use these commands::
+    
+    $ python manage.py test
+
 Test the endpoint using postman 
 Find the sample request and response from the sample_request_responce.txt in the root directory
