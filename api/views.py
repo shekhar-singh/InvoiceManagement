@@ -51,7 +51,7 @@ def getInvoice(request, file_id):
             return JsonResponse({"status": status})
             
         invoice_item = InvoiceItem.objects.filter(invoice=invoice)
-        items = list(invoice_item.values())
+        items = list(invoice_item.values('description','quantity','unitPrice','amount'))
         invoiceDetails = {'invoiceNumber': invoice.invoiceNumber, 'issueDate': invoice.issueDate,
                           'dueDate': invoice.dueDate, 'total': invoice.total, 'items': items}
 
