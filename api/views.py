@@ -25,7 +25,6 @@ def getDigitizationStatus(request, fid):
 
     except Exception as e:
         raise e
-    finally:
         return JsonResponse({"status":"someting went wrong"})
 
     
@@ -46,13 +45,53 @@ def getInvoice(request,fid):
     
         return JsonResponse({"Invoice":invoiceDetails})
     except Exception as e:
-        raise e
-    finally:
-        return JsonResponse({"status":"someting went wrong"})
+        # raise e
+        print(e)
+    # finally:
+    #     return JsonResponse({"status":"someting went wrong"})
     
-
+@csrf_exempt
 def addInvoice(request):
-    pass
+    try:
+        if request.method == 'POST':
+            json_data=json.loads(request.body)
+            print(json_data)
+            fid = json_data["fileId"]
+            invoice = Invoice.objects.get(pk = fid)
+
+            invoiceNumber = json_data["invoiceNumber"]
+            if invoiceNumber:
+                invoice.invoiceNumber = invoiceNumber        
+
+            issueDate = json_data["issueDate"]
+            if issueDate:
+                invoice.issueDate = issueDate
+
+            dueDate = json_data["dueDate"]
+            if dueDate:
+                invoice.dueDate = dueDate
+
+            total = json_data["total"]
+            if total:
+                invoice.total = total
+
+            invoice.save()
+
+            # invoice_id = json_data["invoice_id"]
+            items = json_data["items"]
+
+            for i in items:
+                invoice_item = InvoiceItem.objects.filter(invoice = invoice).update(**i)
+                
+
+            return JsonResponse({"message":"updated successfully"})
+
+
+
+
+    except Exception as e:
+        raise e
+        return JsonResponse({"message":"something went wrong"})
 
 @csrf_exempt
 def markDigitized(request):
