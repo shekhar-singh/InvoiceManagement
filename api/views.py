@@ -1,4 +1,3 @@
-# from django.core import serializers
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -9,22 +8,26 @@ from api.models import Invoice, InvoiceItem
 
 @csrf_exempt
 def upload(request):
-    if request.method == 'POST':
-        pdfFile = request.FILES['file']
-        instance = Invoice()
-        instance.pdfFile = pdfFile
-        instance.digitized = False
-        instance.save()
-        fileId = instance.pk
+    try:
+        if request.method == 'POST':
+            document = request.FILES['file']
+            if not request.FILES['file']:
+                return JsonResponse({"message": "Please upload a valid document"})
 
-        return JsonResponse({"message": "updated successfully", "fileId": fileId})
-    else:
+            instance = Invoice()
+            instance.pdfFile = document
+            instance.digitized = False
+            instance.save()
+            fileId = instance.pk
+
+            return JsonResponse({"message": "updated successfully", "fileId": fileId})
+    except Exception as e:
         return JsonResponse({"message": "something went wrong"})
 
 
-def getDigitizationStatus(request, fid):
+def getDigitizationStatus(request, file_id):
     try:
-        invoice = Invoice.objects.get(pk=fid)
+        invoice = Invoice.objects.get(pk=file_id)
         digitized = invoice.digitized
 
         if digitized:
@@ -35,12 +38,18 @@ def getDigitizationStatus(request, fid):
         return JsonResponse({"status": status})
 
     except Exception as e:
-        return JsonResponse({"status": "No result found"})
+        return JsonResponse({"status": "No result found!"})
 
 
-def getInvoice(request, fid):
+def getInvoice(request, file_id):
     try:
-        invoice = Invoice.objects.get(pk=fid)
+        invoice = Invoice.objects.get(pk=file_id)
+        digitized = invoice.digitized
+
+        if not digitized:
+            status = "pending"
+            return JsonResponse({"status": status})
+            
         invoice_item = InvoiceItem.objects.filter(invoice=invoice)
         items = list(invoice_item.values())
         invoiceDetails = {'invoiceNumber': invoice.invoiceNumber, 'issueDate': invoice.issueDate,
@@ -48,7 +57,7 @@ def getInvoice(request, fid):
 
         return JsonResponse({"Invoice": invoiceDetails})
     except Exception as e:
-        return JsonResponse({"status": "something went wrong"})
+        return JsonResponse({"status": "No result found!"})
 
 
 @csrf_exempt
@@ -57,34 +66,36 @@ def addInvoice(request):
         if request.method == 'POST':
             json_data = json.loads(request.body)
 
-            fid = json_data["fileId"]
-            invoice = Invoice.objects.get(pk=fid)
+            file_id = json_data["fileId"]
+            if not file_id:
+                return JsonResponse({"message": "Please enter a valid file id !"})
+
+            invoice = Invoice.objects.get(pk=file_id)
 
             invoiceNumber = json_data["invoiceNumber"]
-            if invoiceNumber:
+            if json_data["invoiceNumber"]:
                 invoice.invoiceNumber = invoiceNumber
 
             issueDate = json_data["issueDate"]
-            if issueDate:
+            if json_data["issueDate"]:
                 invoice.issueDate = issueDate
 
             dueDate = json_data["dueDate"]
-            if dueDate:
+            if json_data["dueDate"]:
                 invoice.dueDate = dueDate
 
             total = json_data["total"]
-            if total:
+            if json_data["total"]:
                 invoice.total = total
 
-            print(invoice.digitized)
             if not invoice.digitized:
                 invoice.digitized = False
 
             invoice.save()
             items = json_data["items"]
 
-            for i in items:
-                InvoiceItem.objects.filter(invoice=invoice).update(**i)
+            for item in items:
+                InvoiceItem.objects.filter(invoice=invoice).update(**item)
 
             return JsonResponse({"message": "updated successfully"})
 
@@ -98,7 +109,7 @@ def markDigitized(request):
 
         if request.method == 'POST':
             json_data = json.loads(request.body)
-            file_id = json_data['id']
+            file_id = json_data['file_id']
 
             invoice = Invoice.objects.get(pk=file_id)
             invoice.digitized = True
