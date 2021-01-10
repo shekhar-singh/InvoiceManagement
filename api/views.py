@@ -56,6 +56,7 @@ def addInvoice(request):
         if request.method == 'POST':
             json_data=json.loads(request.body)
             print(json_data)
+            # import pdb; pdb.set_trace()
             fid = json_data["fileId"]
             invoice = Invoice.objects.get(pk = fid)
 
@@ -75,6 +76,10 @@ def addInvoice(request):
             if total:
                 invoice.total = total
 
+            print(invoice.digitized)
+            if not invoice.digitized:
+                invoice.digitized = False
+
             invoice.save()
 
             # invoice_id = json_data["invoice_id"]
@@ -82,7 +87,7 @@ def addInvoice(request):
 
             for i in items:
                 invoice_item = InvoiceItem.objects.filter(invoice = invoice).update(**i)
-                
+
 
             return JsonResponse({"message":"updated successfully"})
 
