@@ -5,10 +5,10 @@ class Invoice(models.Model):
     fileId = models.AutoField(primary_key=True, editable=False)
     pdfFile = models.FileField(blank=False, null=False)
     invoiceNumber = models.CharField(max_length=20, unique=True, blank=True, editable=False, null=True)
-    issueDate = models.DateTimeField(blank=True, null=True)
-    dueDate = models.DateTimeField(blank=True, null=True)
+    issueDate = models.CharField(max_length=20, blank=True, null=True)
+    dueDate = models.CharField(max_length=20,blank=True, null=True)
     digitized = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=20, decimal_places=2)
+    total = models.DecimalField(max_digits=20, decimal_places=2,blank=True, null=True)
 
     # def __str__(self):
     #     return self.fileId

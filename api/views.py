@@ -8,8 +8,21 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-def upload():
-    pass
+@csrf_exempt
+def upload(request):
+    if request.method == 'POST':
+        pdfFile = request.FILES['file']
+        print(pdfFile)
+        instance = Invoice()
+        instance.pdfFile = pdfFile
+        instance.digitized =  False
+        instance.save()
+        fileId = instance.pk
+
+        return JsonResponse({"message":"updated successfully", "fileId":fileId})
+    else:
+        return JsonResponse({"message":"someting went wrong"})
+
 
 def getDigitizationStatus(request, fid):
     try:
@@ -91,9 +104,6 @@ def addInvoice(request):
 
             return JsonResponse({"message":"updated successfully"})
 
-
-
-
     except Exception as e:
         raise e
         return JsonResponse({"message":"something went wrong"})
@@ -120,5 +130,6 @@ def markDigitized(request):
             pass
     except Exception as e:
         raise e
-    finally:
         return JsonResponse({"status":"someting went wrong"})
+
+        
